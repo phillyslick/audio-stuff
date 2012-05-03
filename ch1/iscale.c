@@ -4,6 +4,7 @@
    Outputs either frequencies (default), or the interval ration as well as the frequencies*/
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 
 int main (int argc, char const *argv[])
@@ -12,7 +13,7 @@ int main (int argc, char const *argv[])
   int is_midi = 0;
   int write_interval = 0;
   int err = 0;
-  double base_frequency, ratio, start_value;
+  double start_value, base_frequency, ratio;
   double c0, c5;
   double frequencies[25];
   FILE* fp;
@@ -25,20 +26,18 @@ int main (int argc, char const *argv[])
   
   //handle flag arguments
   while(argc > 1){
-    if(argv[1][0] == "-")
+    if(argv[1][0] == '-')
     {
-      int flag = argv[1][1];
-      
-      if(flag == "m")
+      if(argv[1][1] == 'm')
       {
         is_midi = 1;
       }
-      else if(flag == "i")
+      else if(argv[1][1] == 'i')
       {
         write_interval = 1;
       }
       else{
-        printf("Unrecognized option: %s\n", flag );
+        printf("Unrecognized option: %s\n", argv[1]);
         return 1;
       }
       //since argc and argv are pointers, we can increment the position in the char array
@@ -69,12 +68,16 @@ int main (int argc, char const *argv[])
   notes = atoi(argv[1]); //the number of notes
   if(notes < 1 || notes > 24)
   {
-    printf("Error: Number of Notes be 1-24 \n");
+    printf("%d",notes);
+    printf("Error: Number of Notes must be between 1-24 \n");
     return 1;
   }
   
+ 
   start_value = atof(argv[2]); // the start_value input
-  if (is_midi = 1){
+  printf("start_value: %f\n", start_value);
+  if (is_midi == 1){
+    printf("start_value: %f\n", start_value);
     //process start value as midi
     if(start_value < 0 || start_value > 127)  
     {
@@ -85,7 +88,7 @@ int main (int argc, char const *argv[])
   }
   else{
     //process start value as frequency
-    if(start_value <= 0.0){
+    if(start_value <= 0.00){
       printf("Error, frequency start value must be greater than 0.0 hz!\n");
       return 1;
     }
@@ -107,7 +110,7 @@ int main (int argc, char const *argv[])
   /*Okay!  All params ready, let's fill the array and write to the screen/file*/
   
   //calculate base_frequency based on MIDI
-  if(is_midi = 1)
+  if(is_midi == 1)
   {
     ratio = pow(2.0, 1.0/12.0); /* approx 1.0594631 */
     c5 = 220.0 * pow(ratio, 3); // frequency of Middle C
