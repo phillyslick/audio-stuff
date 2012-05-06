@@ -7,12 +7,7 @@ typedef struct breakpoint{
   double value;
   } BREAKPOINT;
 
-// prototype for function
-BREAKPOINT maxpoint(const BREAKPOINT* points, long npoints);
-BREAKPOINT* get_breakpoints(FILE* fp, long* psize);
 
-// function definition
-// --explain here
 
 BREAKPOINT maxpoint(const BREAKPOINT* points, long npoints){
   int i;
@@ -21,7 +16,7 @@ BREAKPOINT maxpoint(const BREAKPOINT* points, long npoints){
   point.time = points[0].time;
   point.value = points[0].value;
   
-  for(i = 0; i < npoints; ++i)
+  for(i = 1; i < npoints; ++i)
   {
     if(point.value < points[i].value)
     {
@@ -34,7 +29,7 @@ BREAKPOINT maxpoint(const BREAKPOINT* points, long npoints){
 
 BREAKPOINT* get_breakpoints(FILE* fp, long* psize){
   int got;
-  long npoints = 0, size = 64;
+  unsigned long npoints = 0, size = 64;
   double lasttime = 0.0;
   BREAKPOINT* points = NULL;
   char line[80];
@@ -45,6 +40,7 @@ BREAKPOINT* get_breakpoints(FILE* fp, long* psize){
   }
   
   points = (BREAKPOINT*) malloc(sizeof(BREAKPOINT) * size);
+  
   if(points==NULL)
   {
     return NULL;
@@ -58,17 +54,17 @@ BREAKPOINT* get_breakpoints(FILE* fp, long* psize){
     }
     if(got == 0)
     {
-      printf("Line %li has non-numeric data\n",npoints+1);
+      printf("Line %lu has non-numeric data\n",npoints+1);
       break;
     }
     if(got == 1)  
     {
-      printf("Incomplete breakpoint found at point %li\n",npoints + 1 );
+      printf("Incomplete breakpoint found at point %lu\n",npoints + 1 );
       break;
     }
     if(points[npoints].time < lasttime)
     {
-      printf("Data error at point %li: time not increasing \n", npoints+1);
+      printf("Data error at point %lu: time not increasing \n", npoints+1);
     }
     
     lasttime = points[npoints].time;
@@ -92,7 +88,7 @@ BREAKPOINT* get_breakpoints(FILE* fp, long* psize){
   }
   if(npoints){
     *psize = npoints;
-    return npoints;
+    return points;
   }
 }
 
